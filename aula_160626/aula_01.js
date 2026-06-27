@@ -18,14 +18,12 @@ function somarInputs() {
   const n1 = Number(document.querySelector("#n1_soma").value);
   const n2 = Number(document.querySelector("#n2_soma").value);
   const resultado = n1 + n2;
-  document.querySelector("#resultado_soma").textContent = `O resultado da soma é ${resultado}`
+  document.querySelector("#resultado_soma").textContent = `O resultado da soma é ${resultado}`;
 }
 
 function multiplicarInputs() {
   const n1 = Number(document.querySelector("#n1_mult").value);
   const n2 = Number(document.querySelector("#n2_mult").value);
   const resultado = n1 * n2;
-  document.querySelector("#resultado_mult").textContent = `O resultado da multiplicação é ${resultado}`
+  document.querySelector("#resultado_mult").textContent = `O resultado da multiplicação é ${resultado}`;
 }
-
-// somar();
