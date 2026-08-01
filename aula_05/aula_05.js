@@ -1,4 +1,3 @@
-
 const API_URL = `https://6a5fe634b1933e9d25fcc879.mockapi.io/produtos`;
 
 async function buscarProdutos() {
@@ -59,13 +58,47 @@ async function apagarProduto(id) {
     }
 }
 
-async function atualizarProduto() {
+async function atualizarProduto(id) {
     
 }
 
 async function criarProduto() {
-    
+    const produto = {
+        nome: document.querySelector("#nome").value,
+        preco: document.querySelector("#preco").value,
+        quantidade: document.querySelector("#quantidade").value
+    };
+
+
+
+    try {
+        await fetch(API_URL, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(produto)
+        })
+        limparFormulario();
+        fecharModal();
+        buscarProdutos();
+    } catch (error) {
+        alert("Não foi possivel cadastrar produto")
+    }
 }
+
+function limparFormulario() {
+    document.querySelector("#nome").value = "";
+    document.querySelector("#preco").value = "";
+    document.querySelector("#quantidade").value = "";
+}
+
+function fecharModal() {
+    const modalHtml = document.querySelector("#modalProduto");
+    const modal = bootstrap.Modal.getOrCreateInstance(modalHtml);
+    modal.hide();
+}
+
 function init() {
     buscarProdutos();
 }
