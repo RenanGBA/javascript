@@ -25,7 +25,7 @@ function popularProdutos(data) {
                     <button class="btn btn-danger" onclick="apagarProduto(${d.id})">
                         Remover
                     </button>
-                    <button class="btn btn-primary">Atualizar</button>
+                    <button class="btn btn-primary" onclick="editarProduto(${d.id})">Editar</button>
                 </td>
             </tr>
         `;
@@ -58,18 +58,85 @@ async function apagarProduto(id) {
     }
 }
 
-async function atualizarProduto(id) {
-    
+async function editarProduto(id) {
+    const url = `${API_URL}/${id}`
+    try {
+        const response = await fetch(url);
+        const data = await response.json();
+        popularFormulario(data);
+        abrirModal();
+    } catch (error) {
+        alert("Não foi possível editar este produto!")
+    }
 }
 
-async function criarProduto() {
-    const produto = {
-        nome: document.querySelector("#nome").value,
-        preco: document.querySelector("#preco").value,
-        quantidade: document.querySelector("#quantidade").value
+function modalNovoProduto() {
+    limparFormulario();
+    abrirModal();
+}
+
+function salvarProduto() {
+    const id = Number(document.querySelector("#id").value) || 0;
+    const nome = document.querySelector("#nome").value;
+    const preco = document.querySelector("#preco").value;
+    const quantidade = document.querySelector("#quantidade").value;
+
+    if(nome == "" || preco == "" || quantidade == "") {
+        alert("É obrigatório o preenchimento de todos os campos!")
+        return;
+    }
+
+    //Não permitir
+    if(!Number(preco) || !Number(quantidade)) {
+        alert("Campo preço e quantidade devem ser numéricos!")
+        return;
+    }
+
+    if(id) {
+        atualizarProduto(id);
+        return;
+    }
+
+    criarProduto()
+
+}
+
+function criarObjetoProduto() {
+    return {
+    nome: document.querySelector("#nome").value,
+    preco: document.querySelector("#preco").value,
+    quantidade: document.querySelector("#quantidade").value
     };
+}
 
+async function atualizarProduto(id) {
+    const produto = criarObjetoProduto();
+    const url = `${API_URL}/${id}`
+    try {
+        await fetch(url, {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(produto)
+        })
+        limparFormulario();
+        fecharModal();
+        buscarProdutos();
+    } catch (error) {
+        alert("Não foi possivel editar produto")
+    }
+}
 
+function popularFormulario(data) {
+    console.log(data)
+    document.querySelector("#id").value = data.id;
+    document.querySelector("#nome").value = data.nome;
+    document.querySelector("#preco").value = data.preco;
+    document.querySelector("#quantidade").value = data.quantidade;
+}
+async function criarProduto() {
+    const produto = criarObjetoProduto();
 
     try {
         await fetch(API_URL, {
@@ -88,9 +155,16 @@ async function criarProduto() {
 }
 
 function limparFormulario() {
+    document.querySelector("#id").value = "";
     document.querySelector("#nome").value = "";
     document.querySelector("#preco").value = "";
     document.querySelector("#quantidade").value = "";
+}
+
+function abrirModal() {
+    const modalHtml = document.querySelector("#modalProduto");
+    const modal = bootstrap.Modal.getOrCreateInstance(modalHtml);
+    modal.show();
 }
 
 function fecharModal() {
